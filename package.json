@@ -1,0 +1,66 @@
+{
+  "name": "markbook",
+  "version": "1.0.0",
+  "description": "Developer command launcher built with Electron, React, TypeScript and SQLite.",
+  "main": "dist-electron/main/main.js",
+  "type": "module",
+  "author": "OpenAI Codex",
+  "scripts": {
+    "dev": "concurrently -k \"npm:dev:renderer\" \"npm:dev:main\" \"npm:dev:electron\"",
+    "dev:renderer": "vite",
+    "dev:main": "tsc -p tsconfig.node.json --watch --preserveWatchOutput",
+    "dev:electron": "wait-on tcp:5173 file:dist-electron/main/main.js && cross-env VITE_DEV_SERVER_URL=http://localhost:5173 electron .",
+    "build": "vite build && tsc -p tsconfig.node.json",
+    "dist": "npm.cmd run build && electron-builder --win portable",
+    "dist:portable": "npm.cmd run build && electron-builder --win portable",
+    "dist:installer": "npm.cmd run build && electron-builder --win nsis",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "better-sqlite3": "12.8.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "react-markdown": "10.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "25.5.0",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.1",
+    "concurrently": "9.2.1",
+    "cross-env": "10.1.0",
+    "electron": "41.0.3",
+    "electron-builder": "26.8.1",
+    "typescript": "5.9.3",
+    "vite": "8.0.0",
+    "wait-on": "9.0.4"
+  },
+  "build": {
+    "appId": "com.codex.markbook",
+    "productName": "MarkBook",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**",
+      "dist-electron/**",
+      "package.json"
+    ],
+    "win": {
+      "signAndEditExecutable": false,
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}
